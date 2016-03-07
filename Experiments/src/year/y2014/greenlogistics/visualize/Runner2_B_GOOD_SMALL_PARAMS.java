@@ -43,7 +43,7 @@ public class Runner2_B_GOOD_SMALL_PARAMS
 
 
 
-        HashMap<String, Range> costMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> costMap = new HashMap<>(3);
         costMap.put("space", new Range(825500.0f, 956800.0f));
         costMap.put("tp_space", new Range(825500.0f*0.8d, 956800.0f));
         costMap.put("display", new Range(825500.0f, 956800.0f));
@@ -51,7 +51,7 @@ public class Runner2_B_GOOD_SMALL_PARAMS
         costMap.put("nsgaii", new Range(825500.0f, 956800.0f));
         costMap.put("spea2", new Range(825500.0f, 956800.0f));
 
-        HashMap<String, Range> co2Map = new HashMap<String, Range>(3);
+        HashMap<String, Range> co2Map = new HashMap<>(3);
         co2Map.put("space", new Range(537900.0f, 621400.0f));
         co2Map.put("tp_space", new Range(537900.0f*0.8d, 621400.0f));
         co2Map.put("display", new Range(537900.0f, 621400.0f));
@@ -59,7 +59,7 @@ public class Runner2_B_GOOD_SMALL_PARAMS
         co2Map.put("nsgaii", new Range(537900.0f, 621400.0f));
         co2Map.put("spea2", new Range(537900.0f, 621400.0f));
 
-        HashMap<String, Range> pmMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> pmMap = new HashMap<>(3);
         pmMap.put("space", new Range(4400.0f, 27600.0f));
         pmMap.put("tp_space", new Range(4400.0f*0.8d, 27600.0f));
         pmMap.put("display", new Range(4400.0f, 27600.0f));
@@ -70,7 +70,7 @@ public class Runner2_B_GOOD_SMALL_PARAMS
         // NORMALIZATION
 
 
-        ArrayList<ICriterion> criterion = new ArrayList<ICriterion>(3);
+        ArrayList<ICriterion> criterion = new ArrayList<>(3);
 
         criterion.add(new Criterion("Cost", false, null, costMap));
         IValueExtractor e1 = new CriterionExtractor(criterion.get(0));
@@ -85,7 +85,7 @@ public class Runner2_B_GOOD_SMALL_PARAMS
         criterion.get(2).setExtractor(e3);
 
         // -- GENETIC ---------------
-        ArrayList<IGenetic> genetic = new ArrayList<IGenetic>(2);
+        ArrayList<IGenetic> genetic = new ArrayList<>(2);
 
         //---------------------------------------
         {

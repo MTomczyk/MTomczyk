@@ -40,18 +40,18 @@ public class RunnerECM_A {
 
         DataA d = new DataA();
 
-        long startTime = System.nanoTime();
+        @SuppressWarnings("unused") long startTime = System.nanoTime();
 
         int s = 3;
 
-        ArrayList<Integer> pCost = new ArrayList<Integer>(s * s);
-        ArrayList<Integer> pCO2 = new ArrayList<Integer>(s * s);
-        ArrayList<Integer> pPM = new ArrayList<Integer>(s * s);
-        ArrayList<Integer> del = new ArrayList<Integer>(s * s);
+        ArrayList<Integer> pCost = new ArrayList<>(s * s);
+        ArrayList<Integer> pCO2 = new ArrayList<>(s * s);
+        ArrayList<Integer> pPM = new ArrayList<>(s * s);
+        @SuppressWarnings("unused") ArrayList<Integer> del = new ArrayList<>(s * s);
 
         System.out.printf("START\n");
 
-        int prob = 0;
+        @SuppressWarnings("unused") int prob = 0;
         for (int i = 0; i < 3; i++) {
             for (int a = 0; a <= s; a++) {
                 for (int b = 0; b <= s; b++) {
@@ -98,7 +98,7 @@ public class RunnerECM_A {
         /// ----------------------
         ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
 
-        ArrayList<ISpecimen> specimens = new ArrayList<ISpecimen>(pCost.size());
+        ArrayList<ISpecimen> specimens = new ArrayList<>(pCost.size());
         for (int i = 0; i < pCost.size(); i++)
         {
             double e[] = {pCost.get(i), pCO2.get(i), pPM.get(i)};
@@ -109,7 +109,7 @@ public class RunnerECM_A {
             specimens.add(specimen);
         }
         System.out.println("BEFORE: " + specimens.size());
-        ArrayList<ISpecimen> duplicates = Duplication.extractDuplicates(specimens,criteria, Common.EPSILON, 1);
+        @SuppressWarnings("unused") ArrayList<ISpecimen> duplicates = Duplication.extractDuplicates(specimens,criteria, Common.EPSILON, 1);
         System.out.println("AFTER: " + specimens.size());
 
 

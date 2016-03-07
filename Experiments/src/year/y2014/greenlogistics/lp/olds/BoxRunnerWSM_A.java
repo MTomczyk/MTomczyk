@@ -14,6 +14,7 @@ import utils.LPBox;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 /**
  * Created by MTomczyk on 09.11.2015.
@@ -30,6 +31,7 @@ public class BoxRunnerWSM_A
         return true;
     }
 
+    @SuppressWarnings("UnusedParameters")
     public static boolean toDeleteSolution(ArrayList<ISpecimen> specimens, ArrayList<ICriterion> c, Double ns[], LPBox b0, double epsilon)
     {
         for (ISpecimen s: specimens)
@@ -57,6 +59,7 @@ public class BoxRunnerWSM_A
 
     public static double eps = Common.EPSILON;
 
+    @SuppressWarnings("unused")
     public static LPBox getBox(ArrayList<LPBox> usedBoxes, LinkedList<LPBox> boxes, LPBox b0)
     {
         double d[] = {b0.upper[0] - b0.lower[0], b0.upper[1] - b0.lower[1], b0.upper[2] - b0.lower[2]};
@@ -67,19 +70,19 @@ public class BoxRunnerWSM_A
         for (LPBox b: boxes)
         {
             double sum = 0.0d;
-            for (int i = 0; i < usedBoxes.size(); i++)
+            for (LPBox usedBox : usedBoxes)
             {
-                double A[] = {(usedBoxes.get(i).lower[0] + usedBoxes.get(i).upper[0]) /2.0d,
-                        (usedBoxes.get(i).lower[1] + usedBoxes.get(i).upper[1]) /2.0d,
-                        (usedBoxes.get(i).lower[2] + usedBoxes.get(i).upper[2]) /2.0d};
-                double B[] = {(b.lower[0] + b.upper[0]) /2.0d,
-                        (b.lower[1] + b.upper[1]) /2.0d,
-                        (b.lower[2] + b.upper[2]) /2.0d};
+                double A[] = {(usedBox.lower[0] + usedBox.upper[0]) / 2.0d,
+                        (usedBox.lower[1] + usedBox.upper[1]) / 2.0d,
+                        (usedBox.lower[2] + usedBox.upper[2]) / 2.0d};
+                double B[] = {(b.lower[0] + b.upper[0]) / 2.0d,
+                        (b.lower[1] + b.upper[1]) / 2.0d,
+                        (b.lower[2] + b.upper[2]) / 2.0d};
 
                 double dv[] = new double[3];
-                dv[0] = Math.pow((A[0] - B[0])/d[0],2.0d);
-                dv[1] = Math.pow((A[1] - B[1])/d[1],2.0d);
-                dv[2] = Math.pow((A[2] - B[2])/d[2],2.0d);
+                dv[0] = Math.pow((A[0] - B[0]) / d[0], 2.0d);
+                dv[1] = Math.pow((A[1] - B[1]) / d[1], 2.0d);
+                dv[2] = Math.pow((A[2] - B[2]) / d[2], 2.0d);
                 sum += Math.sqrt(dv[0] + dv[1] + dv[2]);
             }
             if (sum > bestDist)
@@ -97,10 +100,10 @@ public class BoxRunnerWSM_A
     public static void main(String[] args)
     {
         ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
-        ArrayList<ISpecimen> pareto = new ArrayList<ISpecimen>(1000);
+        ArrayList<ISpecimen> pareto = new ArrayList<>(1000);
 
-        ArrayList<LPBox> usedBoxes = new ArrayList<LPBox>(2000);
-        LinkedList<LPBox> boxes = new LinkedList<LPBox>();
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") ArrayList<LPBox> usedBoxes = new ArrayList<>(2000);
+        LinkedList<LPBox> boxes = new LinkedList<>();
         boxes.add(getStartingBox());
 
         LPBox b0 = boxes.getFirst().getClone();
@@ -147,8 +150,7 @@ public class BoxRunnerWSM_A
                     //System.out.println(pareto.size() + " " + boxes.size());
                     if (pareto.size() == 1000) break;
 
-                    LinkedList<LPBox> newBoxes = new LinkedList<LPBox>();
-                    for (LPBox b : boxes) newBoxes.add(b);
+                    LinkedList<LPBox> newBoxes = boxes.stream().collect(Collectors.toCollection(LinkedList::new));
 
                     ArrayList<LinkedList<LPBox>> partial = generateNewBoxesVSplit(boxes, zs, zi, newBoxes);
 
@@ -183,10 +185,10 @@ public class BoxRunnerWSM_A
                                                                     double zs[], double zi[], LinkedList<LPBox> newBoxes)
     {
 
-        ArrayList<LinkedList<LPBox>> partial = new ArrayList<LinkedList<LPBox>>(3);
-        partial.add(new LinkedList<LPBox>());
-        partial.add(new LinkedList<LPBox>());
-        partial.add(new LinkedList<LPBox>());
+        ArrayList<LinkedList<LPBox>> partial = new ArrayList<>(3);
+        partial.add(new LinkedList<>());
+        partial.add(new LinkedList<>());
+        partial.add(new LinkedList<>());
 
         for (LPBox box : boxes)
         {
@@ -208,6 +210,7 @@ public class BoxRunnerWSM_A
     }
 
 
+    @SuppressWarnings("UnusedParameters")
     public static void updateIndividualSubsets(ArrayList<LinkedList<LPBox>> partial, LinkedList<LPBox> newBoxes, double zs[], double zi[], double zm[])
     {
 
@@ -220,14 +223,13 @@ public class BoxRunnerWSM_A
 
             if (Q == 0) System.out.println("ER");
 
-            ArrayList<LPBox> sortedJ = new ArrayList<LPBox>(Q);
+            ArrayList<LPBox> sortedJ = new ArrayList<>(Q);
             if (Q > 1)
             {
                 // SORT -
-                BinaryTree<LPBox> jT = new BinaryTree<LPBox>(new BoxExtractor(true, j));
+                BinaryTree<LPBox> jT = new BinaryTree<>(new BoxExtractor(true, j));
                 jT.setDirection(true);
-                for (LPBox b : partial.get(i))
-                    jT.insert(b);
+                partial.get(i).forEach(jT::insert);
                 sortedJ.add(jT.search());
                 LPBox A;
                 while ((A = jT.next()) != null)
@@ -271,8 +273,7 @@ public class BoxRunnerWSM_A
             } else if (Q == 1)
                 sortedJ.add(partial.get(i).get(0));
 
-            for (LPBox b: sortedJ)
-                if (!b.validate()) System.out.println("BOX VALIDATE");
+            sortedJ.stream().filter(b -> !b.validate()).forEach(b -> System.out.println("BOX VALIDATE"));
 
 
             if (sortedJ.size() > 1)
@@ -341,8 +342,7 @@ public class BoxRunnerWSM_A
             }
 
 
-            for (LPBox b : sortedJ)
-                newBoxes.add(b);
+            newBoxes.addAll(sortedJ.stream().collect(Collectors.toList()));
         }
     }
 
@@ -378,6 +378,7 @@ public class BoxRunnerWSM_A
         return box;
     }
 
+    @SuppressWarnings("unused")
     public static Double[] getSolutionForWeights(double w1, double w2, double w3, LPBox box)
     {
         DataA data = new DataA();

@@ -27,7 +27,8 @@ public class Initializer implements IInitializer
 		}
 	}
 
-    private ISpecimen createSpecimen(ArrayList<ICriterion> criterion, String name, MersenneTwister generator,
+    @SuppressWarnings("UnusedParameters")
+	private ISpecimen createSpecimen(ArrayList<ICriterion> criterion, String name, MersenneTwister generator,
                                      Object problem)
     {
 		// Data p = (Data) problem;
@@ -36,7 +37,7 @@ public class Initializer implements IInitializer
 		// SECOND CODING APPROACH
 
 		IGene gene = new Gene();
-		HashMap<String, IGene> geneMap = new HashMap<String, IGene>(4);
+		HashMap<String, IGene> geneMap = new HashMap<>(4);
 
 		IGene epGene_P = new Gene();
 		IGene epGene_C = new Gene();
@@ -63,10 +64,10 @@ public class Initializer implements IInitializer
 		geneMap.put("RM_C", rmGene_C);
 		geneMap.put("RM_T", rmGene_T);
 
-        Shuffle<Integer> shuffle = new Shuffle<Integer>();
+        Shuffle<Integer> shuffle = new Shuffle<>();
 
 		// MAKE RM
-		ArrayList<Integer> RM = new ArrayList<Integer>(15);
+		ArrayList<Integer> RM = new ArrayList<>(15);
 		for (int i = 0; i < 15; i++)
 			RM.add(i);
 
@@ -90,15 +91,15 @@ public class Initializer implements IInitializer
 		rmGene_T.setValues(rmCode_T);
 		
 		// MAKE EP + DC
-		ArrayList<Integer> sEP = new ArrayList<Integer>(3);
-		ArrayList<Integer> DC = new ArrayList<Integer>(16);
+		ArrayList<Integer> sEP = new ArrayList<>(3);
+		ArrayList<Integer> DC = new ArrayList<>(16);
 
 		sEP.add(3);
 		sEP.add(11);
 		sEP.add(15);
         shuffle.shuffle(sEP);
 
-		ArrayList<Integer> EP = new ArrayList<Integer>(3);
+		ArrayList<Integer> EP = new ArrayList<>(3);
 		EP.add(sEP.get(0));
 
 		if (generator.nextDouble() > 0.5d)

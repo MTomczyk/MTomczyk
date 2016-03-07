@@ -27,6 +27,7 @@ import java.util.LinkedList;
 /**
  * Created by MTomczyk on 25.08.2015.
  */
+@SuppressWarnings("unused")
 public class CrossSavePattern
 {
     private static int _bx = 1;
@@ -34,7 +35,8 @@ public class CrossSavePattern
 
     private static int start = 0;
     private static int interval = 1;
-
+    private static int dms = 1;
+    private static int tmp = 0;
 
     public static void main(String args[])
     {
@@ -51,23 +53,19 @@ public class CrossSavePattern
         {
             FileManager.createDir(basePath + "/" + s, "/");
 
-            ArrayList<String> iKeys = new ArrayList<String>(MainDataGetter._keys.size());
-            HashMap<String, ArrayList<Object>> iSeparateParams = new HashMap<String, ArrayList<Object>>();
+            ArrayList<String> iKeys = new ArrayList<>(MainDataGetter._keys.size());
+            HashMap<String, ArrayList<Object>> iSeparateParams = new HashMap<>();
 
-            for (String iS : MainDataGetter._keys)
-            {
-                if (!s.equals(iS))
-                {
-                    iKeys.add(iS);
-                    iSeparateParams.put(iS, MainDataGetter._separateParams.get(iS));
-                }
-            }
+            MainDataGetter._keys.stream().filter(iS -> !s.equals(iS)).forEach(iS -> {
+                iKeys.add(iS);
+                iSeparateParams.put(iS, MainDataGetter._separateParams.get(iS));
+            });
 
             ArrayList<ArrayList<Object>> iParams = ParamsGenerator.generateParams(iKeys, iSeparateParams);
 
             for (ArrayList<Object> p : iParams)
             {
-                HashMap<String, Object> constantValues = new HashMap<String, Object>();
+                HashMap<String, Object> constantValues = new HashMap<>();
                 String addPath = "";
 
                 for (int i = 0; i < p.size(); i++)
@@ -77,7 +75,7 @@ public class CrossSavePattern
                     constantValues.put(iKeys.get(i), p.get(i));
                 }
                 FileManager.createDir(basePath + "/" + s + "/" + addPath, "/");
-                System.out.println(addPath);
+                //System.out.println(addPath);
 
                 // CREATE ALL NECESSARY FILES PATHS
 
@@ -100,6 +98,10 @@ public class CrossSavePattern
                         start = Integer.parseInt(p.get(i).toString());
                     if (iKeys.get(i).equals("INTERVAL"))
                         interval = Integer.parseInt(p.get(i).toString());
+                    if (iKeys.get(i).equals("TMP"))
+                        tmp = Integer.parseInt(p.get(i).toString());
+                    if (iKeys.get(i).equals("DMS"))
+                        dms = Integer.parseInt(p.get(i).toString());
                 }
 
                 createDataFile(data, basePath + "/" + s + "/" + addPath,
@@ -123,18 +125,29 @@ public class CrossSavePattern
         {
             SXSSFWorkbook wb = new SXSSFWorkbook();
 
-            ArrayList<Sheet> sheets = new ArrayList<Sheet>();
-            ArrayList<String> labels = new ArrayList<String>();
+            ArrayList<Sheet> sheets = new ArrayList<>();
+            ArrayList<String> labels = new ArrayList<>();
 
             for (int i = 0; i < MainDataGetter._separateParams.get(changeKey).size(); i++)
             {
                 String name = MainDataGetter._separateParams.get(changeKey).get(i).toString();
                 labels.add(name);
                 int value = 0;
-                if (changeKey.equals("START"))
-                    value = Integer.parseInt(name);
-                else if (changeKey.equals("INTERVAL"))
-                    value = Integer.parseInt(name);
+                switch (changeKey)
+                {
+                    case "START":
+                        value = Integer.parseInt(name);
+                        break;
+                    case "INTERVAL":
+                        value = Integer.parseInt(name);
+                        break;
+                    case "TMP":
+                        value = Integer.parseInt(name);
+                        break;
+                    case "DMS":
+                        value = Integer.parseInt(name);
+                        break;
+                }
 
                 Sheet sh = wb.createSheet(Integer.toString(value));
                 createParamSheet(2, 2, mdg, wb, sh, 0, changeKey, i, f, data, monotonic);
@@ -216,6 +229,7 @@ public class CrossSavePattern
 
     }
 
+    @SuppressWarnings("ConstantConditions")
     private static void createParamSheet(int by, int bx, MainDataGetter mdg, Workbook wb, Sheet sh, int mode,
                                          String changeKey, int param, int feature,
                                          HashMap<IGenetic, String[][][]> data, boolean monotonic)
@@ -415,17 +429,21 @@ public class CrossSavePattern
                     IndexedColors.GREY_50_PERCENT.getIndex());
             fillNumericalSheetTest(2, 1, mdg, wb, sh, 1, changeKey, data);
 
-            sh = wb.createSheet("Usrednione generacje X Czas");
-            createHeader(1, 1, totalWidth, 1, true, mdg, wb, sh,
-                    MainDataGetter._problemName + " Usrednione wyniki z " + mdg._generations + " generacji (Czas na osi X)",
-                    data, IndexedColors.GREY_50_PERCENT.getIndex());
-            fillNumericalSheet(2, 1, mdg, wb, sh, 2, changeKey, data);
+            if (mdg.getGenerationTrialMeasureParams()._performAUCTime)
+            {
+                sh = wb.createSheet("Usrednione generacje X Czas");
+                createHeader(1, 1, totalWidth, 1, true, mdg, wb, sh,
+                        MainDataGetter._problemName + " Usrednione wyniki z " + mdg._generations + " generacji (Czas na osi X)",
+                        data, IndexedColors.GREY_50_PERCENT.getIndex());
+                fillNumericalSheet(2, 1, mdg, wb, sh, 2, changeKey, data);
 
-            sh = wb.createSheet("Usrednione generacje X Czas TEST");
-            createHeader(1, 1, totalWidthTest, 1, true, mdg, wb, sh,
-                    MainDataGetter._problemName + " Test Wilcoxona",
-                    data, IndexedColors.GREY_50_PERCENT.getIndex());
-            fillNumericalSheetTest(2, 1, mdg, wb, sh, 2, changeKey, data);
+                sh = wb.createSheet("Usrednione generacje X Czas TEST");
+                createHeader(1, 1, totalWidthTest, 1, true, mdg, wb, sh,
+                        MainDataGetter._problemName + " Test Wilcoxona",
+                        data, IndexedColors.GREY_50_PERCENT.getIndex());
+                fillNumericalSheetTest(2, 1, mdg, wb, sh, 2, changeKey, data);
+            }
+
 
             FileOutputStream out;
             try
@@ -531,11 +549,10 @@ public class CrossSavePattern
         for (IPopulationComprehensive pc : mdg._populationComprehensive)
         {
             i++;
-            int x = bx;
             y += (featureSize + 1);
-            createHeader(y, x, totalWidth, 1, true, mdg, wb, sh, pc.getKey(), data,
+            createHeader(y, bx, totalWidth, 1, true, mdg, wb, sh, pc.getKey(), data,
                     IndexedColors.GREY_40_PERCENT.getIndex());
-            createStatistic(y + 1, x, mdg._featureExtractor.size() + i, mdg._featureExtractor.size() + i, mdg, wb, sh, mode, changeKey, data);
+            createStatistic(y + 1, bx, mdg._featureExtractor.size() + i, mdg._featureExtractor.size() + i, mdg, wb, sh, mode, changeKey, data);
 
             if ((mode == 0) && (pc.getKey().equals("OrderingBestDistanceUtility")))
             {
@@ -544,10 +561,10 @@ public class CrossSavePattern
                 for (double t : th)
                 {
                     y += (featureSize + 1);
-                    createHeader(y, x, totalWidth, 1, true, mdg, wb, sh, pc.getKey() + String.format("GEN and PC - %.3f", t), data,
+                    createHeader(y, bx, totalWidth, 1, true, mdg, wb, sh, pc.getKey() + String.format("GEN and PC - %.3f", t), data,
                             IndexedColors.GREY_40_PERCENT.getIndex());
 
-                    createStatisticGenAndPC(y + 1, x, mdg._featureExtractor.size() + i, mdg._featureExtractor.size() + i, mdg, wb, sh,
+                    createStatisticGenAndPC(y + 1, bx, mdg._featureExtractor.size() + i, mdg._featureExtractor.size() + i, mdg, wb, sh,
                             changeKey, data, t);
                 }
 
@@ -598,10 +615,21 @@ public class CrossSavePattern
         {
             String name = MainDataGetter._separateParams.get(changeKey).get(i).toString();
 
-            if (changeKey.equals("START"))
-                start = Integer.parseInt(name);
-            else if (changeKey.equals("INTERVAL"))
-                interval = Integer.parseInt(name);
+            switch (changeKey)
+            {
+                case "START":
+                    start = Integer.parseInt(name);
+                    break;
+                case "INTERVAL":
+                    interval = Integer.parseInt(name);
+                    break;
+                case "DMS":
+                    dms = Integer.parseInt(name);
+                    break;
+                case "TMP":
+                    tmp = Integer.parseInt(name);
+                    break;
+            }
 
             fillDataFromFileGenAndPC(by + 1, bx + ise * i, feature, statistic, i, mdg, wb, sh, changeKey, data, threshold);
         }
@@ -838,8 +866,16 @@ public class CrossSavePattern
         } else column = getColumnNumberTest(mdg._featureExtractor.get(feature), mdg._statisticExtractor.get(statistic),
                 mdg._featureExtractor, mdg._statisticExtractor);
 
+        //System.out.println(genetic.getName() + " " + changeKey + " " + mdg._featureExtractor.get(feature).getKey() + " " + mdg._statisticExtractor.get(statistic).getKey());
+        //System.out.println(result.length);
+        //System.out.println(file.length + " " + file[0].length);
+
         for (int i = 0; i < testRow; i++)
+        {
+            //System.out.println(i + " " + rowBegin + " " + column);
             result[i] = Double.parseDouble(file[i + rowBegin][column].replace(',', '.'));
+        }
+
 
         return result;
     }
@@ -907,15 +943,11 @@ public class CrossSavePattern
 
                 cs.setFillPattern(CellStyle.SOLID_FOREGROUND);
                 cs.setFillForegroundColor(IndexedColors.WHITE.getIndex());
-                if (position != null)
-                {
-                    if (position[g] == 0) cs.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
-                    else if (position[g] == 1) cs.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
-                    else if (position[g] == 2) cs.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                    else if (position[g] == 3) cs.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                    else cs.setFillForegroundColor(IndexedColors.WHITE.getIndex());
-                } else
-                    cs.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+                if (position[g] == 0) cs.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
+                else if (position[g] == 1) cs.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+                else if (position[g] == 2) cs.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+                else if (position[g] == 3) cs.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+                else cs.setFillForegroundColor(IndexedColors.WHITE.getIndex());
 
                 if (i == 0) cs.setDataFormat(wb.getCreationHelper().createDataFormat().getFormat("0"));
                 else cs.setDataFormat(wb.getCreationHelper().createDataFormat().getFormat("0.00"));
@@ -1134,30 +1166,32 @@ public class CrossSavePattern
                     mdg._statisticExtractor,
                     mdg._internalStatisticExtractor);
 
-            int row = mainHeaderRow;
-            monotonicRow = row;
+            monotonicRow = mainHeaderRow;
 
             boolean found = false;
 
             for (int i = 1; i < mdg._generations - 1; i++)
             {
-                double vA = Double.parseDouble(mat[row + i - 1][referenceColumn].replace(',', '.'));
-                double vB = Double.parseDouble(mat[row + i][referenceColumn].replace(',', '.'));
+                double vA = Double.parseDouble(mat[mainHeaderRow + i - 1][referenceColumn].replace(',', '.'));
+                double vB = Double.parseDouble(mat[mainHeaderRow + i][referenceColumn].replace(',', '.'));
 
                 if ((monotonic._lessPreferable) && (vA >= threshold) && (vB <= threshold))
                 {
-                    monotonicRow = row + i;
+                    monotonicRow = mainHeaderRow + i;
                     found = true;
                     break;
                 } else if ((!monotonic._lessPreferable) && (vA <= threshold) && (vB >= threshold))
                 {
-                    monotonicRow = row + i;
+                    monotonicRow = mainHeaderRow + i;
                     found = true;
                     break;
                 }
             }
 
-            if (found == false) monotonicRow = -1;
+            if (!found)
+            {
+                monotonicRow = -1;
+            }
         }
 
         int row = mainHeaderRow + mainRow - 1;
@@ -1177,18 +1211,22 @@ public class CrossSavePattern
     private static int getColumnNumberTest(IFeatureExtractor cFe, IStatisticExtractor cSe, ArrayList<IFeatureExtractor> fe,
                                            ArrayList<IStatisticExtractor> se)
     {
+        //System.out.println(cFe.getKey() + " " + cSe.getKey() + " -- " + se.size());
         int result = 1;
 
         for (IFeatureExtractor featureExtractor : fe)
         {
+            //System.out.println("-  " + featureExtractor.getKey() + " " + result);
             if (!featureExtractor.getKey().equals(cFe.getKey()))
             {
-                result += se.size() * (se.size());
+                result += se.size();// * (se.size());
+                //System.out.println(result);
                 continue;
             }
 
             for (IStatisticExtractor statisticExtractor : se)
             {
+                //System.out.println("---  " + statisticExtractor.getKey() + " " + result);
                 if (!statisticExtractor.getKey().equals(cSe.getKey()))
                     result++;
                 else return result;
@@ -1285,7 +1323,7 @@ public class CrossSavePattern
 
     private static HashMap<IGenetic, String[][][]> captureData(MainDataGetter mdg, String readPath, String changeKey, Object files[][])
     {
-        HashMap<IGenetic, String[][][]> data = new HashMap<IGenetic, String[][][]>();
+        HashMap<IGenetic, String[][][]> data = new HashMap<>();
         for (IGenetic g : mdg._dummyGenetic)
         {
             String[][][] gData = new String[files.length][][];
@@ -1313,7 +1351,7 @@ public class CrossSavePattern
 
     private static String[][] readDataFromFile(String path)
     {
-        LinkedList<String> data = new LinkedList<String>();
+        LinkedList<String> data = new LinkedList<>();
         BufferedReader br = FileUtil.getBufferReader(path);
 
         while (true)

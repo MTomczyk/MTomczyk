@@ -84,9 +84,9 @@ public class GeneticPattern
                 System.out.println(t + " " + (endTime - beginTime) / 1000.0d);
 
                 // SAFE PARETO-FRONTS
-                safePareto(data._basePath, genetic.get(0), t, data._criteria);
-                safePareto(data._basePath, genetic.get(1), t, data._criteria);
-                safePareto(data._basePath, genetic.get(2), t, data._criteria);
+                safePareto(MainDataGetter._basePath, genetic.get(0), t, data._criteria);
+                safePareto(MainDataGetter._basePath, genetic.get(1), t, data._criteria);
+                safePareto(MainDataGetter._basePath, genetic.get(2), t, data._criteria);
             }
 
             gtm.calculateStatistics();

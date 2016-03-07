@@ -29,7 +29,6 @@ import measure.population.specimen.DMOrderingExtractor;
 import measure.population.specimen.DummyExtractor;
 import measure.population.specimen.interfaces.IFeatureExtractor;
 import normalization.MinMaxReverseNormalization;
-import normalization.interfaces.INormalization;
 import org.apache.commons.math3.random.MersenneTwister;
 import patterns.genetic.aglorithms.NSGAII;
 import patterns.genetic.aglorithms.SPEA2;
@@ -70,8 +69,8 @@ public class MainDataGetter
     public int _generations = 1000;
 
     public String _names[] = {
-            "NSGA-II",
-            "SPEA2",
+            //"NSGA-II",
+            //"SPEA2",
             "TP-NSGA-II"};
 
     public HashMap<IGenetic, String> _constantResultPaths = null;
@@ -103,13 +102,13 @@ public class MainDataGetter
         // -----------------------------------------------------
         if (_keys == null)
         {
-            _keys = new ArrayList<String>(2);
+            _keys = new ArrayList<>(2);
             _keys.add("INTERVAL");
             _keys.add("START");
 
-            _separateParams = new HashMap<String, ArrayList<Object>>();
+            _separateParams = new HashMap<>();
             {
-                ArrayList<Object> interval = new ArrayList<Object>(1);
+                ArrayList<Object> interval = new ArrayList<>(1);
                 interval.add("nondom");
                 /*interval.add(20);
                 interval.add(30);
@@ -119,7 +118,7 @@ public class MainDataGetter
                 _separateParams.put(_keys.get(0), interval);
             }
             {
-                ArrayList<Object> start = new ArrayList<Object>(5);
+                ArrayList<Object> start = new ArrayList<>(5);
                 start.add("A");
                 /*start.add(100);
                 start.add(200);
@@ -134,7 +133,7 @@ public class MainDataGetter
         // --- DUMMY GENETIC ------------------------------------------
         // -----------------------------------------------------
 
-        _dummyGenetic = new ArrayList<IGenetic>(_keys.size());
+        _dummyGenetic = new ArrayList<>(_keys.size());
         for (String _name : _names)
         {
             Genetic.Params p = new Genetic.Params();
@@ -144,64 +143,64 @@ public class MainDataGetter
 
         // --- CONSTANT RESULTS PATHS ---------------------------
         // -----------------------------------------------------
-        _constantResultPaths = new HashMap<IGenetic, String>();
-        _constantResultPaths.put(_dummyGenetic.get(0), "Results/year/y2015/greenlogistics/11_2015/fullA/TP-NSGA-II");
-        _constantResultPaths.put(_dummyGenetic.get(1), "Results/year/y2015/greenlogistics/11_2015/fullA/TP-SPEA2");
+        _constantResultPaths = new HashMap<>();
+        //_constantResultPaths.put(_dummyGenetic.get(0), "Results/year/y2015/greenlogistics/11_2015/fullA/TP-NSGA-II");
+        //_constantResultPaths.put(_dummyGenetic.get(1), "Results/year/y2015/greenlogistics/11_2015/fullA/TP-SPEA2");
 
         // --- STATISTICS ------------------------------------------
         // -----------------------------------------------------
         // --- FEATURES EXTRACTOR ---
-        _featureExtractor = new ArrayList<IFeatureExtractor>(1);
+        _featureExtractor = new ArrayList<>(1);
         _featureExtractor.add(new DMOrderingExtractor(new OrderingDM(new PartialSumUtility(null, null)), "DM"));
 
         // --- STATISTICS EXTRACTOR ---
-        _statisticExtractor = new ArrayList<IStatisticExtractor>(2);
+        _statisticExtractor = new ArrayList<>(2);
         _statisticExtractor.add(new MaxExtractor());
         _statisticExtractor.add(new MeanExtractor());
 
         // --- INTERNAL STATISTICS EXTRACTOR ---
-        _internalStatisticExtractor = new ArrayList<IStatisticExtractor>(2);
+        _internalStatisticExtractor = new ArrayList<>(2);
         _internalStatisticExtractor.add(new MeanExtractor());
         _internalStatisticExtractor.add(new SDExtractor());
 
         // --- UWAGA
-        _populationComprehensive = new ArrayList<IPopulationComprehensive>(2);
+        _populationComprehensive = new ArrayList<>(2);
         _populationComprehensive.add(new ElapsedTime());
         _populationComprehensive.add(new OrderingBestDistanceUtility(null, ReferenceSolutions._data[0], _criteria));
         // --- CHART INPUT
-        _cInput = new ArrayList<ArrayList<ChartInput>>(3);
+        _cInput = new ArrayList<>(3);
         {
-            ArrayList<ChartInput> ci = new ArrayList<ChartInput>(1);
+            ArrayList<ChartInput> ci = new ArrayList<>(1);
             ci.add(new ChartInput(_featureExtractor.get(0), _statisticExtractor.get(0), _internalStatisticExtractor.get(0)));
             ci.add(new ChartInput(_featureExtractor.get(0), _statisticExtractor.get(1), _internalStatisticExtractor.get(0)));
             _cInput.add(ci);
         }
         {
-            ArrayList<ChartInput> ci = new ArrayList<ChartInput>(1);
+            ArrayList<ChartInput> ci = new ArrayList<>(1);
             ci.add(new ChartInput(new DummyExtractor("ElapsedTime"), new measure.population.DummyExtractor("ElapsedTime"),
                     _internalStatisticExtractor.get(0)));
             _cInput.add(ci);
         }
         {
-            ArrayList<ChartInput> ci = new ArrayList<ChartInput>(1);
+            ArrayList<ChartInput> ci = new ArrayList<>(1);
             ci.add(new ChartInput(new DummyExtractor("OrderingBestDistanceUtility"), new measure.population.DummyExtractor("OrderingBestDistanceUtility"),
                     _internalStatisticExtractor.get(0)));
             _cInput.add(ci);
         }
 
-        _monotonic = new HashMap<String, HashMap<String, GenerationTrialMeasure.Monotonic>>();
-        _monotonic.put(_featureExtractor.get(0).getKey(), new HashMap<String, GenerationTrialMeasure.Monotonic>());
+        _monotonic = new HashMap<>();
+        _monotonic.put(_featureExtractor.get(0).getKey(), new HashMap<>());
         _monotonic.get(_featureExtractor.get(0).getKey()).put(_statisticExtractor.get(0).getKey(), new GenerationTrialMeasure.Monotonic("Mean"));
         _monotonic.get(_featureExtractor.get(0).getKey()).put(_statisticExtractor.get(1).getKey(), new GenerationTrialMeasure.Monotonic("Mean"));
-        _monotonic.put("OrderingBestDistanceUtility", new HashMap<String, GenerationTrialMeasure.Monotonic>());
+        _monotonic.put("OrderingBestDistanceUtility", new HashMap<>());
         _monotonic.get("OrderingBestDistanceUtility").put("OrderingBestDistanceUtility", new GenerationTrialMeasure.Monotonic("OrderingBestDistanceUtility"));
 
         // --- CRITERIA ------------------------------------------
         // -----------------------------------------------------
 
-        HashMap<String, Range> costMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> costMap = new HashMap<>(3);
         costMap.put("space", new Range(843700.0f, 1032700.0f));
-        costMap.put("tp_space", new Range(843700.0f*0.0f, 1032700.0f));
+        costMap.put("tp_space", new Range(843700.0f*1.0f, 1032700.0f));
         costMap.put("display", new Range(843700.0f, 1032700.0f));
         costMap.put("mdvf", new Range(843700.0f, 1032700.0f));
         costMap.put("nsgaii", new Range(843700.0f, 1032700.0f));
@@ -209,9 +208,9 @@ public class MainDataGetter
         costMap.put("spea2_nemo0", new Range(843700.0f, 1032700.0f));
 
 
-        HashMap<String, Range> co2Map = new HashMap<String, Range>(3);
+        HashMap<String, Range> co2Map = new HashMap<>(3);
         co2Map.put("space", new Range(535100.0f, 570600.0f));
-        co2Map.put("tp_space", new Range(535100.0f*0.0f, 570600.0f));
+        co2Map.put("tp_space", new Range(535100.0f*1.0f, 570600.0f));
         co2Map.put("display", new Range(535100.0f, 570600.0f));
         co2Map.put("mdvf", new Range(535100.0f, 570600.0f));
         co2Map.put("nsgaii", new Range(535100.0f, 570600.0f));
@@ -219,9 +218,9 @@ public class MainDataGetter
         co2Map.put("spea2_nemo0", new Range(535100.0f, 570600.0f));
 
 
-        HashMap<String, Range> pmMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> pmMap = new HashMap<>(3);
         pmMap.put("space", new Range(2700.0f, 14800.0f));
-        pmMap.put("tp_space", new Range(2700.0f*0.0f, 14800.0f));
+        pmMap.put("tp_space", new Range(2700.0f*1.0f, 14800.0f));
         pmMap.put("display", new Range(2700.0f, 14800.0f));
         pmMap.put("mdvf", new Range(2700.0f, 14800.0f));
         pmMap.put("nsgaii", new Range(2700.0f, 14800.0f));
@@ -231,7 +230,7 @@ public class MainDataGetter
         // NORMALIZATION
 
 
-        _criteria = new ArrayList<ICriterion>(3);
+        _criteria = new ArrayList<>(3);
 
         _criteria.add(new Criterion("Cost", false, null, costMap));
         IValueExtractor e1 = new CriterionExtractor(_criteria.get(0));
@@ -275,7 +274,7 @@ public class MainDataGetter
 
     public ArrayList<UtilityFunction> getUtilityFunctions(int t)
     {
-        ArrayList<UtilityFunction> uf = new ArrayList<UtilityFunction>(3);
+        ArrayList<UtilityFunction> uf = new ArrayList<>(3);
 
         double w1 = weights_3d.data[t][0];
         double w2 = weights_3d.data[t][1];
@@ -298,7 +297,7 @@ public class MainDataGetter
 
     public ArrayList<Measure> getMeasure(ArrayList<IGenetic> genetic, int generations)
     {
-        ArrayList<Measure> result = new ArrayList<Measure>(genetic.size());
+        ArrayList<Measure> result = new ArrayList<>(genetic.size());
         for (IGenetic aGenetic : genetic)
         {
             Measure.Params p = new Measure.Params();
@@ -308,8 +307,8 @@ public class MainDataGetter
             p._keepSpecimenStatistics = false;
             p._genetic = aGenetic;
 
-            p._normalization = new HashMap<IFeatureExtractor, HashMap<IStatisticExtractor, INormalization>>();
-            p._normalization.put(_featureExtractor.get(0), new HashMap<IStatisticExtractor, INormalization>());
+            p._normalization = new HashMap<>();
+            p._normalization.put(_featureExtractor.get(0), new HashMap<>());
             p._normalization.get(_featureExtractor.get(0)).put(_statisticExtractor.get(0), new MinMaxReverseNormalization(0.0d, 1.0d, 1.0d));
             p._normalization.get(_featureExtractor.get(0)).put(_statisticExtractor.get(1), new MinMaxReverseNormalization(0.0d, 1.0d, 1.0d));
 
@@ -320,34 +319,35 @@ public class MainDataGetter
         return result;
     }
 
+    @SuppressWarnings("UnusedParameters")
     public ArrayList<IGenetic> getGenetic(ArrayList<Object> params, int t)
     {
-        ArrayList<IGenetic> genetic = new ArrayList<IGenetic>(2);
+        ArrayList<IGenetic> genetic = new ArrayList<>(2);
 
         /**/
 
         {
             IGenetic g = NSGAII.getNSGAII("NSGA-II", _populationSize,_populationResize,_criteria,null,_reproducer,
                     _evaluator,_initializer,_killer,_selector,_choose,_historyMaintain,10000, new DataA());
-            genetic.add(g);
+            //genetic.add(g);
         }
 
         {
             IGenetic g = SPEA2.getSPEA2("SPEA2",_populationSize,_populationResize,_criteria,null,_reproducer,_evaluator,
                     _initializer,_killer,_selector,_choose,_historyMaintain,1000, new DataA());
-            genetic.add(g);
+            //genetic.add(g);
         }
 
         // TP-NSGA-II
         {
-            double _t[] = {0.0037,0.0037,0.0037};
+            double _t[] = {0.011,0.011,0.011};
             IGenetic g = NSGAII.getTParetoNSGAII("TP-NSGA-II",_populationSize,_populationResize,_criteria,null,_reproducer,
                     _evaluator,_initializer,_killer,_selector,_choose,_historyMaintain,10000,_t, new DataA());
             genetic.add(g);
         }
 
         // UWAGA!
-        _populationComprehensive = new ArrayList<IPopulationComprehensive>(2);
+        _populationComprehensive = new ArrayList<>(2);
         _populationComprehensive.add(new ElapsedTime());
 
         IOrderingDM dm = new OrderingDM(new PartialSumUtility(getUtilityFunctions(t), _criteria));

@@ -43,14 +43,14 @@ public class ECM_A
 
         DataA d = new DataA();
 
-        long startTime = System.nanoTime();
+        @SuppressWarnings("unused") long startTime = System.nanoTime();
 
-        int s = 12;
+        int s = 14;
 
-        ArrayList<Integer> pCost = new ArrayList<Integer>(s * s);
-        ArrayList<Integer> pCO2 = new ArrayList<Integer>(s * s);
-        ArrayList<Integer> pPM = new ArrayList<Integer>(s * s);
-        ArrayList<Integer> del = new ArrayList<Integer>(s * s);
+        ArrayList<Integer> pCost = new ArrayList<>(s * s);
+        ArrayList<Integer> pCO2 = new ArrayList<>(s * s);
+        ArrayList<Integer> pPM = new ArrayList<>(s * s);
+        @SuppressWarnings("unused") ArrayList<Integer> del = new ArrayList<>(s * s);
 
         System.out.printf("START\n");
 
@@ -107,7 +107,7 @@ public class ECM_A
         /// ----------------------
         ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
 
-        ArrayList<ISpecimen> specimens = new ArrayList<ISpecimen>(pCost.size());
+        ArrayList<ISpecimen> specimens = new ArrayList<>(pCost.size());
         for (int i = 0; i < pCost.size(); i++)
         {
             double e[] = {pCost.get(i), pCO2.get(i), pPM.get(i)};
@@ -118,7 +118,7 @@ public class ECM_A
             specimens.add(specimen);
         }
         System.out.println("BEFORE: " + specimens.size());
-        ArrayList<ISpecimen> duplicates = Duplication.extractDuplicates(specimens,criteria, Common.EPSILON, 1);
+        @SuppressWarnings("unused") ArrayList<ISpecimen> duplicates = Duplication.extractDuplicates(specimens,criteria, Common.EPSILON, 1);
         System.out.println("AFTER: " + specimens.size());
 
         ArrayList<ISpecimen> pareto = Front.getPareto(specimens, criteria, Common.EPSILON);
@@ -135,7 +135,7 @@ public class ECM_A
         // COST-PM
         {
             ArrayList<ICriterion> costPM = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen sp: pareto)
             {
                 double e[] = {sp.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -157,7 +157,7 @@ public class ECM_A
         // COST-CO
         {
             ArrayList<ICriterion> costCO2 = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen sp: pareto)
             {
                 double e[] = {sp.getAlternative().getEvaluationAt(criteria.get(0)),

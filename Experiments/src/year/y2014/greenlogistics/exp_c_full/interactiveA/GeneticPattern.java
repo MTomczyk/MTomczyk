@@ -2,7 +2,6 @@ package year.y2014.greenlogistics.exp_c_full.interactiveA;
 
 import alternative.Alternative;
 import alternative.interfaces.IAlternative;
-import base.Specimen;
 import decision.maker.ordering.OrderingDM;
 import decision.model.utilityfunction.PartialSumUtility;
 import interfaces.IGenetic;
@@ -11,9 +10,7 @@ import measure.GenerationTrialMeasure;
 import measure.Measure;
 import measure.population.specimen.DMOrderingExtractor;
 import runner.Runner;
-import runner.drawer.CubePareto;
 import runner.interfaces.IRunner;
-import standard.Common;
 import utils.Domination;
 import utils.FileManager;
 
@@ -38,7 +35,7 @@ public class GeneticPattern
             data = new MainDataGetter();
             GenerationTrialMeasure gtm = new GenerationTrialMeasure(data.getGenerationTrialMeasureParams());
 
-            long beginTime = System.currentTimeMillis();
+            @SuppressWarnings("unused") long beginTime = System.currentTimeMillis();
 
             // --- CREATE SUB DIR ---
             String sd = "";
@@ -105,7 +102,7 @@ public class GeneticPattern
                 }
 
 
-                long endTime = System.currentTimeMillis();
+                @SuppressWarnings("unused") long endTime = System.currentTimeMillis();
                 //System.out.println(t + " " + (endTime - beginTime) / 1000.0d);
             }
 

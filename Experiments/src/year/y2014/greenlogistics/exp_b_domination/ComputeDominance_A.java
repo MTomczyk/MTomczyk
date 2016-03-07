@@ -27,7 +27,7 @@ public class ComputeDominance_A
         int trials = 100;
         String algs[] = {"WSM", "ECM", "ADAPT-WSM", "ADAPT-ECM", "NSGA-II", "SPEA2", "TP-NSGA-II"};
 
-        ArrayList<ArrayList<ArrayList<IAlternative>>> data = new ArrayList<ArrayList<ArrayList<IAlternative>>>(3);
+        ArrayList<ArrayList<ArrayList<IAlternative>>> data = new ArrayList<>(3);
 
         double avgPareto[] = {0.0d ,0.0d, 0.0d, 0.0d ,0.0d, 0.0d, 0.0d};
 
@@ -37,7 +37,7 @@ public class ComputeDominance_A
         for (String s: algs)
         {
             alg++;
-            ArrayList<ArrayList<IAlternative>> algData = new ArrayList<ArrayList<IAlternative>>(100);
+            ArrayList<ArrayList<IAlternative>> algData = new ArrayList<>(100);
             data.add(algData);
 
             int toRead = trials;
@@ -48,7 +48,7 @@ public class ComputeDominance_A
 
             for (int t = 0; t < toRead; t++)
             {
-                ArrayList<IAlternative> trialData = new ArrayList<IAlternative>();
+                ArrayList<IAlternative> trialData = new ArrayList<>();
                 algData.add(trialData);
 
                 if (toRead != 1)
@@ -77,9 +77,18 @@ public class ComputeDominance_A
                 else
                 {
                     double cData[][] = Separate.dataWSM_A;
-                    if (s.equals("ECM")) cData = Separate.dataECM_A;
-                    else if (s.equals("ADAPT-WSM")) cData = Separate.dataWSM_ADAPT_A;
-                    else if (s.equals("ADAPT-ECM")) cData = Separate.dataECM_ADAPT_A;
+                    switch (s)
+                    {
+                        case "ECM":
+                            cData = Separate.dataECM_A;
+                            break;
+                        case "ADAPT-WSM":
+                            cData = Separate.dataWSM_ADAPT_A;
+                            break;
+                        case "ADAPT-ECM":
+                            cData = Separate.dataECM_ADAPT_A;
+                            break;
+                    }
 
                     for (double l[] : cData)
                     {
@@ -136,8 +145,25 @@ public class ComputeDominance_A
                     {
                         for (IAlternative aA: cA)
                         {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                int v = (int) ((double)aA.getEvaluationAt(criteria.get(i)));
+                                aA.setEvaluationAt(criteria.get(i),(double)v);
+
+                                v = (int) ((double)aB.getEvaluationAt(criteria.get(i)));
+                                aB.setEvaluationAt(criteria.get(i),(double)v);
+                            }
+
+
                             if (Domination.isDominating(aA, aB, criteria, Common.EPSILON))
                             {
+                                if ((a == 0) && (b == 2))
+                                {
+                                    System.out.println("------------------------");
+                                    System.out.println(aA.getEvaluationAt(criteria.get(0)) + " " + aA.getEvaluationAt(criteria.get(1)) + " " + aA.getEvaluationAt(criteria.get(2)));
+                                    System.out.println(aB.getEvaluationAt(criteria.get(0)) + " " + aB.getEvaluationAt(criteria.get(1)) + " " + aB.getEvaluationAt(criteria.get(2)));
+                                }
+
                                 resDom[t] += 1.0d;
                                 break;
                             }
@@ -186,7 +212,7 @@ public class ComputeDominance_A
         for (int i = 0; i < dom.length; i++)
         {
             String ln = String.format("%.2f ", avgPareto[i]);
-            System.out.print(ln.replace('.',','));
+            System.out.print(ln.replace('.', ','));
 
             for (int j = 0; j < dom.length; j++)
             {

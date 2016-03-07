@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: year.y2014.greenlogistics.lp.Mavrotas_A_from_7_console
+

@@ -25,15 +25,15 @@ public class laumannA_eps
     {
         ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
 
-        ArrayList<ISpecimen> P = new ArrayList<ISpecimen>(200);
+        ArrayList<ISpecimen> P = new ArrayList<>(200);
         Subregion Q = new Subregion(3);
 
-        ArrayList<ArrayList<Double>> e = new ArrayList<ArrayList<Double>>(3);
+        ArrayList<ArrayList<Double>> e = new ArrayList<>(3);
         e.add(null);
-        e.add(new ArrayList<Double>(10000));
+        e.add(new ArrayList<>(10000));
         e.get(1).add(Common.MIN_DOUBLE);
         e.get(1).add(Common.MAX_DOUBLE);
-        e.add(new ArrayList<Double>(10000));
+        e.add(new ArrayList<>(10000));
         e.get(2).add(Common.MIN_DOUBLE);
         e.get(2).add(Common.MAX_DOUBLE);
 
@@ -66,6 +66,7 @@ public class laumannA_eps
 
     }
 
+    @SuppressWarnings("UnusedParameters")
     public static ISpecimen getOpt(ArrayList<Range> r, ArrayList<ICriterion> criteria)
     {
         DataA data = new DataA();
@@ -138,7 +139,7 @@ public class laumannA_eps
 
     public static ArrayList<Range> getConstraints(int i, ArrayList<ArrayList<Double>> e, ArrayList<ISpecimen> P)
     {
-        ArrayList<Range> result = new ArrayList<Range>(3);
+        ArrayList<Range> result = new ArrayList<>(3);
         result.add(null);
         for (int j = 1; j < 3; j++)
         {

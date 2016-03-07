@@ -23,6 +23,7 @@ import year.y2014.greenlogistics.lp.Constraints_B;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 /**
  * Created by MTomczyk on 18.11.2015.
@@ -38,14 +39,16 @@ public class adaptiveWSM_B
         LPBox b0 = initStartingBox();
         b0.print();
 
+        double div = 65.0d;
+
         double zi[] = b0.lower.clone();
         double zm[] = b0.upper.clone();
-        double minA[] = {(zm[0] - zi[0]) / 65.0d, (zm[1] - zi[1]) / 65.0d, (zm[2] - zi[2]) / 65.0d};
-        double maxD[] = {(zm[0] - zi[0]) / 65.0d, (zm[1] - zi[1]) / 65.0d, (zm[2] - zi[2]) / 65.0d};
+        double minA[] = {(zm[0] - zi[0]) / div, (zm[1] - zi[1]) / div, (zm[2] - zi[2]) / div};
+        double maxD[] = {(zm[0] - zi[0]) / div, (zm[1] - zi[1]) / div, (zm[2] - zi[2]) / div};
 
         ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
-        ArrayList<ISpecimen> pareto = new ArrayList<ISpecimen>();
-        LinkedList<LPBox> boxes = new LinkedList<LPBox>();
+        ArrayList<ISpecimen> pareto = new ArrayList<>();
+        LinkedList<LPBox> boxes = new LinkedList<>();
         boxes.add(b0);
 
         int solverRuns = 0;
@@ -77,8 +80,7 @@ public class adaptiveWSM_B
             System.out.println(pareto.size());
             if (pareto.size() == 1000) break;
 
-            LinkedList<LPBox> newBoxes = new LinkedList<LPBox>();
-            for (LPBox b : boxes) newBoxes.add(b);
+            LinkedList<LPBox> newBoxes = boxes.stream().collect(Collectors.toCollection(LinkedList::new));
 
             ArrayList<LinkedList<LPBox>> partial = generateNewBoxesVSplit(boxes,
                     zs.getAlternative().getEvaluationVector(criteria), zi, newBoxes);
@@ -93,12 +95,13 @@ public class adaptiveWSM_B
         long endTime = System.currentTimeMillis();
         System.out.println("Took: " + (endTime - beginTime) / 1000.0d);
 
-        /*for (ISpecimen s: pareto)
+        for (ISpecimen s: pareto)
         {
             System.out.println(s.getAlternative().getEvaluationAt(criteria.get(0)) + " " +
                     s.getAlternative().getEvaluationAt(criteria.get(1)) + " " +
                     s.getAlternative().getEvaluationAt(criteria.get(2)));
-        }*/
+        }
+        System.out.println("-------------------");
         {
             double e[] = {825416.76,	572868.88,	27657.888};
             IAlternative a = new Alternative("A", criteria);
@@ -127,7 +130,7 @@ public class adaptiveWSM_B
         // COST-PM
         {
             ArrayList<ICriterion> costPM = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen s: pareto)
             {
                 double e[] = {s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -149,7 +152,7 @@ public class adaptiveWSM_B
         // COST-CO
         {
             ArrayList<ICriterion> costCO2 = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen s: pareto)
             {
                 double e[] = {s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -174,10 +177,10 @@ public class adaptiveWSM_B
                                                                       double zs[], double zi[], LinkedList<LPBox> newBoxes)
     {
 
-        ArrayList<LinkedList<LPBox>> partial = new ArrayList<LinkedList<LPBox>>(3);
-        partial.add(new LinkedList<LPBox>());
-        partial.add(new LinkedList<LPBox>());
-        partial.add(new LinkedList<LPBox>());
+        ArrayList<LinkedList<LPBox>> partial = new ArrayList<>(3);
+        partial.add(new LinkedList<>());
+        partial.add(new LinkedList<>());
+        partial.add(new LinkedList<>());
 
         for (LPBox box : boxes)
         {
@@ -198,6 +201,7 @@ public class adaptiveWSM_B
         return partial;
     }
 
+    @SuppressWarnings("UnusedParameters")
     public static void updateIndividualSubsets(ArrayList<LinkedList<LPBox>> partial, LinkedList<LPBox> newBoxes, double zs[], double zi[], double zm[])
     {
 
@@ -210,14 +214,13 @@ public class adaptiveWSM_B
 
             if (Q == 0) System.out.println("ER");
 
-            ArrayList<LPBox> sortedJ = new ArrayList<LPBox>(Q);
+            ArrayList<LPBox> sortedJ = new ArrayList<>(Q);
             if (Q > 1)
             {
                 // SORT -
-                BinaryTree<LPBox> jT = new BinaryTree<LPBox>(new BoxExtractor(true, j));
+                BinaryTree<LPBox> jT = new BinaryTree<>(new BoxExtractor(true, j));
                 jT.setDirection(true);
-                for (LPBox b : partial.get(i))
-                    jT.insert(b);
+                partial.get(i).forEach(jT::insert);
                 sortedJ.add(jT.search());
                 LPBox A;
                 while ((A = jT.next()) != null)
@@ -277,8 +280,7 @@ public class adaptiveWSM_B
             }
 
 
-            for (LPBox b : sortedJ)
-                newBoxes.add(b);
+            newBoxes.addAll(sortedJ.stream().collect(Collectors.toList()));
         }
     }
 
@@ -346,9 +348,14 @@ public class adaptiveWSM_B
     {
         DataB data = new DataB();
 
-        long startTime = System.nanoTime();
+        @SuppressWarnings("unused") long startTime = System.nanoTime();
 
         Problem problem;
+
+        minA[0] = 0.0d;
+        minA[1] = 0.0d;
+        minA[2] = 0.0d;
+
 
         double dCost = box.upper[0] - box.lower[0];
         double dCO2 = box.upper[1] - box.lower[1];
@@ -392,7 +399,7 @@ public class adaptiveWSM_B
     {
         Cube3D cube = new Cube3D(new Range(825500.0f, 956800.0f), new Range(537900.0f, 621400.0f)
                 , new Range(4400.0f, 27600.0f), new WhiteSchema());
-        ArrayList<Point> points = new ArrayList<Point>(pareto.size());
+        ArrayList<Point> points = new ArrayList<>(pareto.size());
         for (ISpecimen s : pareto)
         {
             Point p = new Point(s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -403,7 +410,7 @@ public class adaptiveWSM_B
 
         DataSet ds = new DataSet(points);
         ds.setGradient(new RedBlue());
-        ArrayList<DataSet> ads = new ArrayList<DataSet>();
+        ArrayList<DataSet> ads = new ArrayList<>();
         ads.add(ds);
 
         cube.setDataSet(ads);

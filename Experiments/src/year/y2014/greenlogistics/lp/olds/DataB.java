@@ -33,6 +33,7 @@ public class DataB
 
 	// --- STORAGE DATA ------------------
 	// LEASE : (MAX SIZE ; COST) <- MONTHLY
+	@SuppressWarnings("unused")
 	public double storageCostLeasing[][] = {
 			{ 60, 8000, 80, 10400, 100, 13200, 200, 16000, 10000, 1000000 },
 			{ 60, 8000, 80, 10400, 100, 13200, 200, 16000, 10000, 1000000 },

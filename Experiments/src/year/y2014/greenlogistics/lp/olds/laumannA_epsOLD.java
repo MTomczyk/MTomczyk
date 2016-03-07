@@ -17,13 +17,13 @@ public class laumannA_epsOLD
 
     public static void main(String args[])
     {
-        ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
+        @SuppressWarnings("UnusedAssignment") ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
 
-        ArrayList<ISpecimen> P = new ArrayList<ISpecimen>(200);
-        ArrayList<Subregion> Q = new ArrayList<Subregion>(200);
+        ArrayList<ISpecimen> P = new ArrayList<>(200);
+        ArrayList<Subregion> Q = new ArrayList<>(200);
 
         Subregion e = new Subregion();
-        e.e = new ArrayList<Range>(3);
+        e.e = new ArrayList<>(3);
         e.e.add(new Range(Common.MIN_DOUBLE, Common.MAX_DOUBLE));
         e.e.add(new Range(Common.MIN_DOUBLE, Common.MAX_DOUBLE));
         e.e.add(new Range(Common.MIN_DOUBLE, Common.MAX_DOUBLE));
@@ -53,12 +53,14 @@ public class laumannA_epsOLD
             if (triggered) continue;
             // -----------------
             ISpecimen x = getOpt();
+            //noinspection ConstantConditions
             if (x == null)
             {
                 Q.add(ne);
                 skipSecondLine = true;
                 continue;
             }
+            //noinspection ConstantIfStatement,ConstantConditions
             if (true)
             {
                 Q.add(ne);
@@ -76,10 +78,11 @@ public class laumannA_epsOLD
     }
 
 
+    @SuppressWarnings("unused")
     private static Subregion updateConstraints(double y[], Subregion e)
     {
         Subregion result = new Subregion();
-        result.e = new ArrayList<Range>(3);
+        result.e = new ArrayList<>(3);
 
         for (int j = 1; j < 3; j++)
         {
@@ -94,7 +97,7 @@ public class laumannA_epsOLD
     private static Subregion getConstraints(int i, Subregion e, ArrayList<ISpecimen> P)
     {
         Subregion result = new Subregion();
-        result.e = new ArrayList<Range>(3);
+        result.e = new ArrayList<>(3);
         result.e.add(null);
         for (int j = 1; j < 3; j++)
         {

@@ -234,6 +234,7 @@ public class SaveRawPattern
         return 0;
     }
 
+    @SuppressWarnings({"unused", "UnusedAssignment"})
     private static void printResultsTest(double[][] res, int trials, String delim, BufferedWriter bw,
                                          Sheet sh, Workbook wb, int baseFeatures, int baseColumns, int secondaryColumns)
     {
@@ -284,6 +285,7 @@ public class SaveRawPattern
     }
 
 
+    @SuppressWarnings({"UnusedParameters", "unused", "UnusedAssignment"})
     private static void printResults(double[][] res, int generations, String delim, BufferedWriter bw,
                                      Sheet sh, Workbook wb, int baseFeatures, int baseColumns, int secondaryColumns)
     {
@@ -387,6 +389,7 @@ public class SaveRawPattern
         }
     }
 
+    @SuppressWarnings({"UnusedParameters", "unused", "UnusedAssignment"})
     private static void printHeaderTest(String header[][], String delim, BufferedWriter bw, Sheet sh,
                                         Workbook wb, int baseFeatures, int baseColumns, int secondaryColumns)
     {
@@ -440,6 +443,7 @@ public class SaveRawPattern
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     private static double[][] getForTest(int columns, int generations, int trials, int mode,
                                          IGenetic g,
                                          GenerationTrialMeasure gtm,
@@ -533,6 +537,7 @@ public class SaveRawPattern
     }
 
 
+    @SuppressWarnings("UnusedParameters")
     private static String[][] getHeader(int columns, int baseColumns, GenerationTrialMeasure gtm, ArrayList<IFeatureExtractor> fe,
                                         ArrayList<IStatisticExtractor> se, ArrayList<IStatisticExtractor> ise,
                                         ArrayList<IPopulationComprehensive> populationComprehensives)
@@ -612,6 +617,7 @@ public class SaveRawPattern
         return header;
     }
 
+    @SuppressWarnings("UnusedParameters")
     private static String[][] getHeaderTest(GenerationTrialMeasure gtm, ArrayList<IFeatureExtractor> fe,
                                             ArrayList<IStatisticExtractor> se, ArrayList<IStatisticExtractor> ise,
                                             ArrayList<IPopulationComprehensive> populationComprehensives)

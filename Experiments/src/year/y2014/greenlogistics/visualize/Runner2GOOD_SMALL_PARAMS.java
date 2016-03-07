@@ -42,7 +42,7 @@ public class Runner2GOOD_SMALL_PARAMS
         ISelector selector = new Tournament(tParams);
 
 
-        HashMap<String, Range> costMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> costMap = new HashMap<>(3);
         costMap.put("space", new Range(843700.0f, 1032700.0f));
         //costMap.put("tp_space", new Range(0.0f, 1032700.0f));
         costMap.put("tp_space", new Range(843700.0f*0.8d, 1032700.0f));
@@ -51,7 +51,7 @@ public class Runner2GOOD_SMALL_PARAMS
         costMap.put("nsgaii", new Range(843700.0f, 1032700.0f));
         costMap.put("spea2", new Range(843700.0f, 1032700.0f));
 
-        HashMap<String, Range> co2Map = new HashMap<String, Range>(3);
+        HashMap<String, Range> co2Map = new HashMap<>(3);
         co2Map.put("space", new Range(535100.0f, 570600.0f));
         co2Map.put("tp_space", new Range(535100.0f*0.8d, 570600.0f));
         //co2Map.put("tp_space", new Range(0.0f, 570600.0f));
@@ -60,7 +60,7 @@ public class Runner2GOOD_SMALL_PARAMS
         co2Map.put("nsgaii", new Range(535100.0f, 570600.0f));
         co2Map.put("spea2", new Range(535100.0f, 570600.0f));
 
-        HashMap<String, Range> pmMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> pmMap = new HashMap<>(3);
         pmMap.put("space", new Range(2700.0f, 14800.0f));
         pmMap.put("tp_space", new Range(2700.0f*0.8d, 14800.0f));
         //pmMap.put("tp_space", new Range(0.0f, 14800.0f));
@@ -72,7 +72,7 @@ public class Runner2GOOD_SMALL_PARAMS
         // NORMALIZATION
 
 
-        ArrayList<ICriterion> criterion = new ArrayList<ICriterion>(3);
+        ArrayList<ICriterion> criterion = new ArrayList<>(3);
 
         criterion.add(new Criterion("Cost", false, null, costMap));
         IValueExtractor e1 = new CriterionExtractor(criterion.get(0));
@@ -87,7 +87,7 @@ public class Runner2GOOD_SMALL_PARAMS
         criterion.get(2).setExtractor(e3);
 
         // -- GENETIC ---------------
-        ArrayList<IGenetic> genetic = new ArrayList<IGenetic>(2);
+        ArrayList<IGenetic> genetic = new ArrayList<>(2);
 
         //---------------------------------------
         {

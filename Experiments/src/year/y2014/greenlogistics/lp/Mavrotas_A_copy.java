@@ -70,7 +70,7 @@ public class Mavrotas_A_copy
             //w2 = 0.0d;
             //w3 = 0.5d;
 
-            ArrayList<UtilityFunction> uf = new ArrayList<UtilityFunction>(3);
+            ArrayList<UtilityFunction> uf = new ArrayList<>(3);
 
             uf.add(new UtilityFunction(2));
             uf.get(0).add(new Point(843633.68, w1));
@@ -94,7 +94,7 @@ public class Mavrotas_A_copy
             for (int step = 0; step < steps; step++)
             {
                 System.out.println("STEP: " + step);
-                ArrayList<ISpecimen> pareto = new ArrayList<ISpecimen>(100);
+                ArrayList<ISpecimen> pareto = new ArrayList<>(100);
                 for (int a = 0; a <= div; a++)
                 {
                     for (int b = 0; b <= div; b++)
@@ -268,11 +268,12 @@ public class Mavrotas_A_copy
 
 
 
+    @SuppressWarnings("unused")
     public static void drawAll(ArrayList<ISpecimen> pareto, ArrayList<ICriterion> criteria)
     {
         Cube3D cube = new Cube3D(new Range(843600.0f, 1047900.0f), new Range(535000.0f, 572600.0f)
                 , new Range(2700.0f, 14810.0f), new WhiteSchema());
-        ArrayList<Point> points = new ArrayList<Point>(pareto.size());
+        ArrayList<Point> points = new ArrayList<>(pareto.size());
         for (ISpecimen s : pareto)
         {
             Point p = new Point(s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -283,7 +284,7 @@ public class Mavrotas_A_copy
 
         DataSet ds = new DataSet(points);
         ds.setGradient(new RedBlue());
-        ArrayList<DataSet> ads = new ArrayList<DataSet>();
+        ArrayList<DataSet> ads = new ArrayList<>();
         ads.add(ds);
 
         cube.setDataSet(ads);

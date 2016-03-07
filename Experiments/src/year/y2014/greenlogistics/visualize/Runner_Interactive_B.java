@@ -18,8 +18,8 @@ import interfaces.ISpecimen;
 import killer.Killer;
 import org.apache.commons.math3.random.MersenneTwister;
 import patterns.genetic.aglorithms.SPEA2;
-import patterns.genetic.aglorithms.linear.NEMO0_LINEAR;
 import patterns.genetic.aglorithms.linear.NEMO0_SPEA2;
+import patterns.genetic.aglorithms.nemo0.NEMO0_PATTERN;
 import runner.drawer.CubePareto;
 import runner.interfaces.IRunner;
 import select.Tournament;
@@ -58,7 +58,7 @@ public class Runner_Interactive_B
         ISelector selector = new Tournament(tParams);
 
 
-        HashMap<String, Range> costMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> costMap = new HashMap<>(3);
         costMap.put("space", new Range(825500.0f, 956800.0f));
         costMap.put("tp_space", new Range(825500.0f*0.0d, 956800.0f));
         costMap.put("display", new Range(825500.0f, 956800.0f));
@@ -66,7 +66,7 @@ public class Runner_Interactive_B
         costMap.put("nsgaii", new Range(825500.0f, 956800.0f));
         costMap.put("spea2", new Range(825500.0f, 956800.0f));
 
-        HashMap<String, Range> co2Map = new HashMap<String, Range>(3);
+        HashMap<String, Range> co2Map = new HashMap<>(3);
         co2Map.put("space", new Range(537900.0f, 621400.0f));
         co2Map.put("tp_space", new Range(537900.0f*0.0d, 621400.0f));
         co2Map.put("display", new Range(537900.0f, 621400.0f));
@@ -74,7 +74,7 @@ public class Runner_Interactive_B
         co2Map.put("nsgaii", new Range(537900.0f, 621400.0f));
         co2Map.put("spea2", new Range(537900.0f, 621400.0f));
 
-        HashMap<String, Range> pmMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> pmMap = new HashMap<>(3);
         pmMap.put("space", new Range(4400.0f, 27600.0f));
         pmMap.put("tp_space", new Range(4400.0f*0.0d, 27600.0f));
         pmMap.put("display", new Range(4400.0f, 27600.0f));
@@ -85,7 +85,7 @@ public class Runner_Interactive_B
         // NORMALIZATION
 
 
-        ArrayList<ICriterion> criterion = new ArrayList<ICriterion>(3);
+        ArrayList<ICriterion> criterion = new ArrayList<>(3);
 
         criterion.add(new Criterion("Cost", false, null, costMap));
         IValueExtractor e1 = new CriterionExtractor(criterion.get(0));
@@ -100,10 +100,10 @@ public class Runner_Interactive_B
         criterion.get(2).setExtractor(e3);
 
         // -- GENETIC ---------------
-        ArrayList<IGenetic> genetic = new ArrayList<IGenetic>(2);
+        ArrayList<IGenetic> genetic = new ArrayList<>(2);
 
 
-        ArrayList<UtilityFunction> uf = new ArrayList<UtilityFunction>(3);
+        ArrayList<UtilityFunction> uf = new ArrayList<>(3);
 
         double w1 = 0.5d;
         double w2 = 0.0d;
@@ -147,7 +147,7 @@ public class Runner_Interactive_B
             pGenetic._criteria = criterion;
             pGenetic._selector = selector;
             pGenetic.name = "NSGAII";
-            Genetic NSGAII = new Genetic(pGenetic);
+            @SuppressWarnings("unused") Genetic NSGAII = new Genetic(pGenetic);
             //genetic.add(NSGAII);
         }
         {
@@ -158,15 +158,19 @@ public class Runner_Interactive_B
             genetic.add(g);
         }
         {
-            IGenetic g = NEMO0_LINEAR.getNEMO0("NEMO0_LINEAR", populationSize, populationResized, criterion, uf, new Reproducer(), new EvaluatorB(),
-                    new Initializer(), new Killer(), selector, new BestRandom(new MersenneTwister(System.currentTimeMillis()), 2),
-                    new BaseRule(40, 0), new BaseMaintain(10000), 10000, new DataB());
+            @SuppressWarnings("unused") IGenetic g = NEMO0_PATTERN.getNEMO0("NEMO0_LINEAR", populationSize, populationResized,
+                    criterion, new OrderingDM(new PartialSumUtility(uf, criterion)),
+                    new Reproducer(), new EvaluatorB(),
+                    new Initializer(), new Killer(), selector,
+                    new BestRandom(new MersenneTwister(System.currentTimeMillis()), 2),
+                    new BaseRule(40, 0), new BaseMaintain(10000), 10000,
+                    new DataB(), null, NEMO0_PATTERN.INT_LINEAR);
             //genetic.add(g);
         }
         {
             IGenetic g = NEMO0_SPEA2.getNEMO0_SPEA2("SPEA_NEMO", populationSize, populationResized, populationSize, criterion,
                     uf, new Reproducer(), new EvaluatorB(), new Initializer(), new Killer(), selector, new BestRandom(new MersenneTwister(System.currentTimeMillis()), 2),
-                    new BaseRule(40, 0), new BaseMaintain(10000), 100000, new DataB());
+                    new BaseRule(40, 0), new BaseMaintain(10000), 100000, new DataB(), null);
             genetic.add(g);
         }
 
@@ -190,7 +194,7 @@ public class Runner_Interactive_B
             //System.out.println(genetic.get(2).getPareto().size());
 
             double A = 0.0d;
-            double B = 0.0d;
+            @SuppressWarnings("unused") double B = 0.0d;
             {
                 double e[] = dm.evaluate(genetic.get(1).getPareto(),new FromSpecimen());
                 for (double d: e)
@@ -201,7 +205,7 @@ public class Runner_Interactive_B
                 for (double d: e)
                     if (d > B) B = d;
             }*/
-            double o = dm.evaluate(a);
+            @SuppressWarnings("unused") double o = dm.evaluate(a);
             //System.out.println(A + " " + B + " " + dm.evaluate(a));
             //System.out.println(i + " " + (o-A)/o + " " + (o-B)/o);
 

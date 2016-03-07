@@ -19,11 +19,11 @@ public class SeparateA
     public static void main(String args[])
     {
         ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
-        ArrayList<ISpecimen> pareto = new ArrayList<ISpecimen>(200);
-        for (int i = 0; i < data.length; i++)
+        ArrayList<ISpecimen> pareto = new ArrayList<>(200);
+        for (double[] aData : data)
         {
             IAlternative a = new Alternative("A", criteria);
-            a.setEvaluationVector(data[i], criteria);
+            a.setEvaluationVector(aData, criteria);
             ISpecimen s = new Specimen("S", criteria);
             s.setAlternative(a);
             pareto.add(s);
@@ -32,7 +32,7 @@ public class SeparateA
         // COST-PM
         {
             ArrayList<ICriterion> costPM = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen s: pareto)
             {
                 double e[] = {s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -54,7 +54,7 @@ public class SeparateA
         // COST-CO
         {
             ArrayList<ICriterion> costCO2 = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen s: pareto)
             {
                 double e[] = {s.getAlternative().getEvaluationAt(criteria.get(0)),

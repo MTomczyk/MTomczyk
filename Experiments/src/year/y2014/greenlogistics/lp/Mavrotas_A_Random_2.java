@@ -8,7 +8,7 @@ import chart.cube3d.WhiteSchema;
 import criterion.Criterion;
 import criterion.interfaces.ICriterion;
 import dataset.DataSet;
-import decision.elicitation.choice.ordering.BestRandom;
+import decision.elicitation.choice.ordering.RandomAlternatives;
 import decision.elicitation.choice.ordering.iterfaces.IChoice;
 import decision.maker.ordering.Order;
 import decision.maker.ordering.OrderingDM;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 /**
  * Created by MTomczyk on 25.11.2015.
  */
-public class Mavrotas_A
+public class Mavrotas_A_Random_2
 {
     public static void main(String args[])
     {
@@ -56,20 +56,23 @@ public class Mavrotas_A
 
         MersenneTwister generator = new MersenneTwister(System.currentTimeMillis());
 
-        IChoice choice = new BestRandom(generator, 1);
+        IChoice choice = new RandomAlternatives(generator, 2);
+        long beginTime = System.currentTimeMillis();
+
         for (int trial = 0; trial < trials; trial++)
         {
+
             Range r[] = getRanges(null);
 
-            double w1 = weights_3d.data[trial][0];
+            /*double w1 = weights_3d.data[trial][0];
             double w2 = weights_3d.data[trial][1];
             double w3 = weights_3d.data[trial][2];
+           */
+            double w1 = 0.5d;
+            double w2 = 0.0d;
+            double w3 = 0.5d;
 
-            //w1 = 0.5d;
-            //w2 = 0.0d;
-            //w3 = 0.5d;
-
-            ArrayList<UtilityFunction> uf = new ArrayList<UtilityFunction>(3);
+            ArrayList<UtilityFunction> uf = new ArrayList<>(3);
 
             uf.add(new UtilityFunction(2));
             uf.get(0).add(new Point(843633.68, w1));
@@ -93,12 +96,12 @@ public class Mavrotas_A
             for (int step = 0; step < steps; step++)
             {
                 System.out.println("STEP: " + step);
-                ArrayList<ISpecimen> pareto = new ArrayList<ISpecimen>(100);
+                ArrayList<ISpecimen> pareto = new ArrayList<>(100);
                 for (int a = 0; a <= div; a++)
                 {
                     for (int b = 0; b <= div; b++)
                     {
-                        double co2Upper = r[1].right - (double) a * r[1].getRange() / (double) div;
+                        @SuppressWarnings("ConstantConditions") double co2Upper = r[1].right - (double) a * r[1].getRange() / (double) div;
                         double pmUpper = r[2].right - (double) b * r[2].getRange() / (double) div;
 
                         if (a == div) co2Upper = r[1].left;
@@ -183,8 +186,8 @@ public class Mavrotas_A
                 {
                     double ref = ordered.get(0).getEvaluationAt(criteria.get(c));
 
-                    double dv = r[c].right - ref;
-                    double alpha = 0.5d;
+                    @SuppressWarnings("ConstantConditions") double dv = r[c].right - ref;
+                    double alpha = 0.7d;
                     r[c].right = ref + dv * alpha;
 
                     //double v2 = ordered.get(1).getEvaluationAt(criteria.get(c));
@@ -231,6 +234,8 @@ public class Mavrotas_A
                     break;
                 }
 
+                long endTime = System.currentTimeMillis();
+                System.out.println(trial + " " + step + " " + (endTime - beginTime) / 1000.0d);
             }
 
         }
@@ -258,15 +263,15 @@ public class Mavrotas_A
 
     public static Range[] getRanges(Range prevf[])
     {
-        double v1[] = null;
+        double v1[];
         if (prevf == null) v1 = WSM_A.getResultForWeights(1.0d, 0.0d, 0.0d);
         else v1 = WSM_A.getResultForWeights(1.0d, 0.0d, 0.0d, prevf[0].right, prevf[1].right, prevf[2].right);
 
-        double v2[] = null;
+        double v2[];
         if (prevf == null) v2 = WSM_A.getResultForWeights(0.0d, 1.0d, 0.0d);
         else v2 = WSM_A.getResultForWeights(0.0d, 1.0d, 0.0d, prevf[0].right, prevf[1].right, prevf[2].right);
 
-        double v3[] = null;
+        double v3[];
         if (prevf == null) v3 = WSM_A.getResultForWeights(0.0d, 0.0d, 1.0d);
         else v3 = WSM_A.getResultForWeights(0.0d, 0.0d, 1.0d, prevf[0].right, prevf[1].right, prevf[2].right);
 
@@ -292,11 +297,12 @@ public class Mavrotas_A
 
 
 
+    @SuppressWarnings("unused")
     public static void drawAll(ArrayList<ISpecimen> pareto, ArrayList<ICriterion> criteria)
     {
         Cube3D cube = new Cube3D(new Range(843600.0f, 1047900.0f), new Range(535000.0f, 572600.0f)
                 , new Range(2700.0f, 14810.0f), new WhiteSchema());
-        ArrayList<Point> points = new ArrayList<Point>(pareto.size());
+        ArrayList<Point> points = new ArrayList<>(pareto.size());
         for (ISpecimen s : pareto)
         {
             Point p = new Point(s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -307,7 +313,7 @@ public class Mavrotas_A
 
         DataSet ds = new DataSet(points);
         ds.setGradient(new RedBlue());
-        ArrayList<DataSet> ads = new ArrayList<DataSet>();
+        ArrayList<DataSet> ads = new ArrayList<>();
         ads.add(ds);
 
         cube.setDataSet(ads);

@@ -68,7 +68,9 @@ public class GeneticPattern
                 System.out.println(t);
                 for (int g = 0; g < data._generations; g++)
                 {
-                    //System.out.println(g);
+                    long endTime = System.currentTimeMillis();
+                    System.out.println(g + " " + t + " " + (endTime - beginTime) / 1000.0d);
+
                     r.step(g);
                     for (int i = 0; i < genetic.size(); i++)
                     {
@@ -80,13 +82,12 @@ public class GeneticPattern
                 for (int i = 0; i < genetic.size(); i++)
                     gtm.addData(data._dummyGenetic.get(i), m.get(i));
 
-                long endTime = System.currentTimeMillis();
-                System.out.println(t + " " + (endTime - beginTime) / 1000.0d);
+
 
                 // SAFE PARETO-FRONTS
-                safePareto(data._basePath, genetic.get(0), t, data._criteria);
-                safePareto(data._basePath, genetic.get(1), t, data._criteria);
-                safePareto(data._basePath, genetic.get(2), t, data._criteria);
+                safePareto(MainDataGetter._basePath, genetic.get(0), t, data._criteria);
+                safePareto(MainDataGetter._basePath, genetic.get(1), t, data._criteria);
+                safePareto(MainDataGetter._basePath, genetic.get(2), t, data._criteria);
             }
 
             gtm.calculateStatistics();

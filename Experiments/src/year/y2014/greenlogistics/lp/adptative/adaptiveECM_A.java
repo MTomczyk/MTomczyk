@@ -23,6 +23,7 @@ import year.y2014.greenlogistics.lp.Constraints_A;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 /**
  * Created by MTomczyk on 18.11.2015.
@@ -44,8 +45,8 @@ public class adaptiveECM_A
         double maxD[] = {(zm[0] - zi[0]) / 36.0d, (zm[1] - zi[1]) / 36.0d, (zm[2] - zi[2]) / 36.0d};
 
         ArrayList<ICriterion> criteria = Criterion.getCriterionArray("C", 3, false);
-        ArrayList<ISpecimen> pareto = new ArrayList<ISpecimen>();
-        LinkedList<LPBox> boxes = new LinkedList<LPBox>();
+        ArrayList<ISpecimen> pareto = new ArrayList<>();
+        LinkedList<LPBox> boxes = new LinkedList<>();
         boxes.add(b0);
 
 
@@ -79,8 +80,7 @@ public class adaptiveECM_A
             System.out.println(pareto.size());
             if (pareto.size() == 1000) break;
 
-            LinkedList<LPBox> newBoxes = new LinkedList<LPBox>();
-            for (LPBox b : boxes) newBoxes.add(b);
+            LinkedList<LPBox> newBoxes = boxes.stream().collect(Collectors.toCollection(LinkedList::new));
 
             ArrayList<LinkedList<LPBox>> partial = generateNewBoxesVSplit(boxes,
                     zs.getAlternative().getEvaluationVector(criteria), zi, newBoxes);
@@ -130,7 +130,7 @@ public class adaptiveECM_A
         // COST-PM
         {
             ArrayList<ICriterion> costPM = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen s: pareto)
             {
                 double e[] = {s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -152,7 +152,7 @@ public class adaptiveECM_A
         // COST-CO
         {
             ArrayList<ICriterion> costCO2 = Criterion.getCriterionArray("C", 2, false);
-            ArrayList<ISpecimen> costPMSpec = new ArrayList<ISpecimen>(pareto.size());
+            ArrayList<ISpecimen> costPMSpec = new ArrayList<>(pareto.size());
             for (ISpecimen s: pareto)
             {
                 double e[] = {s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -197,10 +197,10 @@ public class adaptiveECM_A
                                                                       double zs[], double zi[], LinkedList<LPBox> newBoxes)
     {
 
-        ArrayList<LinkedList<LPBox>> partial = new ArrayList<LinkedList<LPBox>>(3);
-        partial.add(new LinkedList<LPBox>());
-        partial.add(new LinkedList<LPBox>());
-        partial.add(new LinkedList<LPBox>());
+        ArrayList<LinkedList<LPBox>> partial = new ArrayList<>(3);
+        partial.add(new LinkedList<>());
+        partial.add(new LinkedList<>());
+        partial.add(new LinkedList<>());
 
         int num = -1;
         for (LPBox box : boxes)
@@ -225,6 +225,7 @@ public class adaptiveECM_A
         return partial;
     }
 
+    @SuppressWarnings("UnusedParameters")
     public static void updateIndividualSubsets(ArrayList<LinkedList<LPBox>> partial, LinkedList<LPBox> newBoxes, double zs[], double zi[], double zm[])
     {
 
@@ -237,14 +238,13 @@ public class adaptiveECM_A
 
             if (Q == 0) System.out.println("ER");
 
-            ArrayList<LPBox> sortedJ = new ArrayList<LPBox>(Q);
+            ArrayList<LPBox> sortedJ = new ArrayList<>(Q);
             if (Q > 1)
             {
                 // SORT -
-                BinaryTree<LPBox> jT = new BinaryTree<LPBox>(new BoxExtractor(true, j));
+                BinaryTree<LPBox> jT = new BinaryTree<>(new BoxExtractor(true, j));
                 jT.setDirection(true);
-                for (LPBox b : partial.get(i))
-                    jT.insert(b);
+                partial.get(i).forEach(jT::insert);
                 sortedJ.add(jT.search());
                 LPBox A;
                 while ((A = jT.next()) != null)
@@ -304,8 +304,7 @@ public class adaptiveECM_A
             }
 
 
-            for (LPBox b : sortedJ)
-                newBoxes.add(b);
+            newBoxes.addAll(sortedJ.stream().collect(Collectors.toList()));
         }
     }
 
@@ -370,11 +369,12 @@ public class adaptiveECM_A
         return box;
     }
 
+    @SuppressWarnings("UnusedParameters")
     public static Double[] getSolution(LPBox box, int criterion, double minA[], double maxD[])
     {
         DataA data = new DataA();
 
-        long startTime = System.nanoTime();
+        @SuppressWarnings("unused") long startTime = System.nanoTime();
 
         Problem problem = new Problem();
 
@@ -431,7 +431,7 @@ public class adaptiveECM_A
     {
         Cube3D cube = new Cube3D(new Range(843700.0f, 1032700.0f), new Range(535100.0f, 570600.0f)
                 , new Range(2700.0f, 14800.0f), new WhiteSchema());
-        ArrayList<Point> points = new ArrayList<Point>(pareto.size());
+        ArrayList<Point> points = new ArrayList<>(pareto.size());
         for (ISpecimen s : pareto)
         {
             Point p = new Point(s.getAlternative().getEvaluationAt(criteria.get(0)),
@@ -442,7 +442,7 @@ public class adaptiveECM_A
 
         DataSet ds = new DataSet(points);
         ds.setGradient(new RedBlue());
-        ArrayList<DataSet> ads = new ArrayList<DataSet>();
+        ArrayList<DataSet> ads = new ArrayList<>();
         ads.add(ds);
 
         cube.setDataSet(ads);

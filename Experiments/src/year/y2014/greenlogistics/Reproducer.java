@@ -18,7 +18,7 @@ public class Reproducer implements IReproducer
     public ArrayList<ISpecimen> reproduce(ArrayList<IParents> parent, Object problem, int generation,
                                           MersenneTwister generator)
     {
-        ArrayList<ISpecimen> reproduction = new ArrayList<ISpecimen>(parent.size());
+        ArrayList<ISpecimen> reproduction = new ArrayList<>(parent.size());
         ISpecimen parents[] = new Specimen[2];
 
         for (int i = 0; i < parent.size(); i++)
@@ -63,7 +63,7 @@ public class Reproducer implements IReproducer
     }
 
 
-    @SuppressWarnings("SpellCheckingInspection")
+    @SuppressWarnings({"SpellCheckingInspection", "UnusedParameters"})
     private void changeCritAll(double c[], double chance, int max, MersenneTwister generator)
     {
         int change = generator.nextInt(3);
@@ -135,6 +135,7 @@ public class Reproducer implements IReproducer
     }
 
 
+    @SuppressWarnings("UnusedParameters")
     public void mutate(ISpecimen specimen, ISpecimen parent[], MersenneTwister generator, int generation)
     {
         double chance;
@@ -148,9 +149,9 @@ public class Reproducer implements IReproducer
         double codeDC_T[] = specimen.getGene().getGene().get("DC_T").getValues();
 
         // USUN COS Z DC + DODAJ COS DO DC
-        ArrayList<Integer> pDC = new ArrayList<Integer>(codeDC_P.length);
-        ArrayList<Integer> cDC = new ArrayList<Integer>(codeDC_C.length);
-        ArrayList<Integer> tDC = new ArrayList<Integer>(codeDC_T.length);
+        ArrayList<Integer> pDC = new ArrayList<>(codeDC_P.length);
+        ArrayList<Integer> cDC = new ArrayList<>(codeDC_C.length);
+        ArrayList<Integer> tDC = new ArrayList<>(codeDC_T.length);
 
         for (int i = 0; i < codeDC_P.length; i++)
         {
@@ -253,14 +254,14 @@ public class Reproducer implements IReproducer
         chance = 0.9d;
         if (generator.nextDouble() > chance)
         {
-            ArrayList<Integer> EP = new ArrayList<Integer>(3);
+            ArrayList<Integer> EP = new ArrayList<>(3);
 
             EP.add(3);
             EP.add(11);
             EP.add(15);
             this.shuffle(EP, EP.size() * 5, generator);
 
-            @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") ArrayList<Integer> nEP = new ArrayList<Integer>(3);
+            @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") ArrayList<Integer> nEP = new ArrayList<>(3);
             nEP.add(EP.get(0));
 
             if (generator.nextDouble() > 0.5d) nEP.add(EP.get(1));
@@ -370,6 +371,7 @@ public class Reproducer implements IReproducer
     }
 
 
+    @SuppressWarnings("UnusedParameters")
     public ISpecimen cross(ISpecimen parent[], Object problem, MersenneTwister generator, int side)
     {
         // CROSS RM

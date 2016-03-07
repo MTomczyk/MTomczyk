@@ -10,12 +10,12 @@ import java.util.ArrayList;
  */
 public class Subregion
 {
-    public ArrayList<ArrayList<Range>> e = new ArrayList<ArrayList<Range>>();
+    public ArrayList<ArrayList<Range>> e = new ArrayList<>();
 
     public Subregion(int dimensions)
     {
         for (int i = 0; i < dimensions; i++)
-            e.add(new ArrayList<Range>());
+            e.add(new ArrayList<>());
     }
 
     public void print()
@@ -35,7 +35,7 @@ public class Subregion
         {
             if (i >= nr.size()) break;
             if (nr.get(i) == null) continue;
-            ArrayList<Range> toMerge = new ArrayList<Range>(e.get(i).size());
+            ArrayList<Range> toMerge = new ArrayList<>(e.get(i).size());
             double max = nr.get(i).right;
             double min = nr.get(i).left;
 
@@ -63,8 +63,8 @@ public class Subregion
             if (i >= r.size()) break;
             if (r.get(i) == null) continue;
 
-            double min = Common.MAX_DOUBLE;
-            double max = Common.MIN_DOUBLE;
+            @SuppressWarnings("unused") double min = Common.MAX_DOUBLE;
+            @SuppressWarnings("unused") double max = Common.MIN_DOUBLE;
 
             boolean isInside = false;
 

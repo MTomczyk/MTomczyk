@@ -10,7 +10,7 @@ import standard.Common;
 
 public class EvaluatorB implements IEvaluator
 {
-	@SuppressWarnings("ConstantConditions")
+	@SuppressWarnings({"ConstantConditions", "UnusedParameters"})
 	private double[][] updateSecond(int cityDC, int criterion, int tr, double demand, double citiesEP[],
 			double tStorage[][], DataB p)
 	{
@@ -105,7 +105,7 @@ public class EvaluatorB implements IEvaluator
 		double storageMap[] = null;
 
 		// WYZNACZ MOZLIWE KOMBINACJE POLACZEN
-		LinkedList<Integer> connection = new LinkedList<Integer>();
+		LinkedList<Integer> connection = new LinkedList<>();
 		for (int i = 0; i < citiesDC.length; i++)
 		{
 			for (int j = 0; j < citiesDC.length; j++)
@@ -132,9 +132,9 @@ public class EvaluatorB implements IEvaluator
 
 		for (Integer v : connection)
 		{
-			ArrayList<Integer> DC = new ArrayList<Integer>(2);
-			ArrayList<Integer> POINT = new ArrayList<Integer>(2);
-			ArrayList<Double> DEMAND = new ArrayList<Double>(2);
+			ArrayList<Integer> DC = new ArrayList<>(2);
+			ArrayList<Integer> POINT = new ArrayList<>(2);
+			ArrayList<Double> DEMAND = new ArrayList<>(2);
 
 			int nd = v % 100;
 			int st = (v - (v % 100)) / 100;
@@ -414,8 +414,8 @@ public class EvaluatorB implements IEvaluator
 
 		// --------- APPLY NEW DC
 
-		ArrayList<Integer> DCp = new ArrayList<Integer>(dc_p.length);
-		ArrayList<Integer> DCc = new ArrayList<Integer>(dc_p.length);
+		ArrayList<Integer> DCp = new ArrayList<>(dc_p.length);
+		ArrayList<Integer> DCc = new ArrayList<>(dc_p.length);
 
 		for (int i = 0; i < dc_p.length; i++)
 		{

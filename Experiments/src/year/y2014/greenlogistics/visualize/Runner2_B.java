@@ -30,9 +30,14 @@ public class Runner2_B
 
     public static void main(String args[])
     {
+        int PS = 150;
+        double eps = 0.004d;
+
+        System.out.println(PS + " " + eps);
+
         int generations = 1000;
-        int populationSize = 200;
-        int populationResized = 400;
+        int populationSize = PS;
+        int populationResized = PS * 2;
 
         // -- SELECTOR ---------------
         Tournament.Params tParams = new Tournament.Params();
@@ -43,25 +48,25 @@ public class Runner2_B
 
 
 
-        HashMap<String, Range> costMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> costMap = new HashMap<>(3);
         costMap.put("space", new Range(825500.0f, 956800.0f));
-        costMap.put("tp_space", new Range(825500.0f*0.0d, 956800.0f));
+        costMap.put("tp_space", new Range(825500.0f*1.0d, 956800.0f));
         costMap.put("display", new Range(825500.0f, 956800.0f));
         costMap.put("mdvf", new Range(825500.0f, 956800.0f));
         costMap.put("nsgaii", new Range(825500.0f, 956800.0f));
         costMap.put("spea2", new Range(825500.0f, 956800.0f));
 
-        HashMap<String, Range> co2Map = new HashMap<String, Range>(3);
+        HashMap<String, Range> co2Map = new HashMap<>(3);
         co2Map.put("space", new Range(537900.0f, 621400.0f));
-        co2Map.put("tp_space", new Range(537900.0f*0.0d, 621400.0f));
+        co2Map.put("tp_space", new Range(537900.0f*1.0d, 621400.0f));
         co2Map.put("display", new Range(537900.0f, 621400.0f));
         co2Map.put("mdvf", new Range(537900.0f, 621400.0f));
         co2Map.put("nsgaii", new Range(537900.0f, 621400.0f));
         co2Map.put("spea2", new Range(537900.0f, 621400.0f));
 
-        HashMap<String, Range> pmMap = new HashMap<String, Range>(3);
+        HashMap<String, Range> pmMap = new HashMap<>(3);
         pmMap.put("space", new Range(4400.0f, 27600.0f));
-        pmMap.put("tp_space", new Range(4400.0f*0.0d, 27600.0f));
+        pmMap.put("tp_space", new Range(4400.0f*1.0d, 27600.0f));
         pmMap.put("display", new Range(4400.0f, 27600.0f));
         pmMap.put("mdvf", new Range(4400.0f, 27600.0f));
         pmMap.put("nsgaii", new Range(4400.0f, 27600.0f));
@@ -70,7 +75,7 @@ public class Runner2_B
         // NORMALIZATION
 
 
-        ArrayList<ICriterion> criterion = new ArrayList<ICriterion>(3);
+        ArrayList<ICriterion> criterion = new ArrayList<>(3);
 
         criterion.add(new Criterion("Cost", false, null, costMap));
         IValueExtractor e1 = new CriterionExtractor(criterion.get(0));
@@ -85,7 +90,7 @@ public class Runner2_B
         criterion.get(2).setExtractor(e3);
 
         // -- GENETIC ---------------
-        ArrayList<IGenetic> genetic = new ArrayList<IGenetic>(2);
+        ArrayList<IGenetic> genetic = new ArrayList<>(2);
 
         //---------------------------------------
         {
@@ -120,14 +125,15 @@ public class Runner2_B
             pGenetic._problem = new DataB();
             pGenetic._epsilon = Common.EPSILON;
             pGenetic._killer = null;
-            //pGenetic._t = new double[]{0.0085,0.0085,0.0085};
-            pGenetic._t = new double[]{0.0026,0.0026,0.0026};
+            double e = eps;
+            pGenetic._t = new double[]{e,e,e};
 
             {
                 sort.classic.NSGAII.NSGAII.Params pNSGAII = new sort.classic.NSGAII.NSGAII.Params();
                 pNSGAII._populSize = populationSize;
                 pNSGAII._epsilon = Common.EPSILON;
                 pNSGAII._rangeFromCriterion = true;
+                pNSGAII._steadyState = true;
                 pGenetic._sorter = new sort.classic.NSGAII.NSGAII(pNSGAII);
             }
 
@@ -141,7 +147,7 @@ public class Runner2_B
 
 
         // RUN
-        int repeat[] = {1,200};
+        int repeat[] = {1,PS};
 
         IRunner g = new runner.Runner(genetic, criterion, new CubePareto(), repeat);
 
@@ -153,16 +159,16 @@ public class Runner2_B
 
         for (int i = 0; i < generations; i++)
         {
-            if (genetic.get(1).getPareto().size() % 25 == 0)
-                System.out.println(genetic.get(1).getPareto().size() + " " + genetic.get(1).getElapsedTime());
+            //if (genetic.get(1).getPareto().size() % 25 == 0)
+            //    System.out.println(genetic.get(1).getPareto().size() + " " + genetic.get(1).getElapsedTime());
 
             System.out.println(i + " " + genetic.get(1).getPareto().size() + " " + genetic.get(1).getElapsedTime());
-            if (i >= 666)
-                n += genetic.get(1).getPareto().size();
+            n += genetic.get(1).getPareto().size();
             g.step(i);
         }
 
-        System.out.println("AVG "+ n /333);
+        System.out.println(String.format("AVG %f", n / (double) generations));
+        System.out.println(genetic.get(1).getPareto().size());
 
 
     }
